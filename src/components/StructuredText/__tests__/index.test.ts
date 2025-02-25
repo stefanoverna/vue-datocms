@@ -157,6 +157,10 @@ describe('StructuredText', () => {
                   meta: [{ id: 'target', value: '_blank' }],
                   children: [{ type: 'span', value: 'here!' }],
                 },
+                {
+                  type: "inlineBlock",
+                  item: "789"
+                }
               ],
             },
             {
@@ -173,6 +177,11 @@ describe('StructuredText', () => {
           quote: 'Foo bar.',
           author: 'Mark Smith',
         },
+        {
+          id: "789",
+          __typename: "MentionRecord",
+          name: "Jane Doe"
+        }
       ],
       links: [
         {
@@ -229,6 +238,14 @@ describe('StructuredText', () => {
                     h('blockquote', null, record.quote as string),
                     h('figcaption', null, record.author as string),
                   ]);
+                default:
+                  return null;
+              }
+            },
+            renderInlineBlock: ({ record }: RenderBlockContext) => {
+              switch (record.__typename) {
+                case 'MentionRecord':
+                  return h('em', null, record.name as string);
                 default:
                   return null;
               }

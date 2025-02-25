@@ -44,7 +44,7 @@ exports[`StructuredText simple dast with no links/blocks with default rules rend
 
 exports[`StructuredText with links/blocks with default rules renders the document 1`] = `
 <div>
-  <h1>This is a<mark>title</mark><a href="/docs/how-to-code">How to code</a><a target="_blank" href="/docs/how-to-code">here!</a></h1>
+  <h1>This is a<mark>title</mark><a href="/docs/how-to-code">How to code</a><a target="_blank" href="/docs/how-to-code">here!</a><em>Jane Doe</em></h1>
   <figure>
     <blockquote>Foo bar.</blockquote>
     <figcaption>Mark Smith</figcaption>

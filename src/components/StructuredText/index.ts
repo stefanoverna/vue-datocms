@@ -20,6 +20,7 @@ import {
   type RenderResult,
   type RenderRule,
   type StructuredText as StructuredTextGraphQlResponse,
+  isInlineBlock,
 } from 'datocms-structured-text-utils';
 import { defineComponent, h, type PropType, type VNode } from 'vue';
 
@@ -106,29 +107,35 @@ export const StructuredText = defineComponent({
     customMarkRules: {
       type: Array as PropType<RenderMarkRule<H, T, F>[]>,
     },
-    /** Fuction that converts an 'inlineItem' node into Vue **/
+    /** Fuction that converts an 'inlineItem' node into a Vue component **/
     renderInlineRecord: {
       type: Function as PropType<
         (context: RenderInlineRecordContext<any>) => AdapterReturn
       >,
     },
-    /** Fuction that converts an 'itemLink' node into Vue **/
+    /** Fuction that converts an 'itemLink' node into a Vue component **/
     renderLinkToRecord: {
       type: Function as PropType<
         (context: RenderRecordLinkContext<any>) => AdapterReturn
       >,
     },
-    /** Fuction that converts a 'block' node into Vue **/
+    /** Fuction that converts a 'block' node into a Vue component **/
     renderBlock: {
+      type: Function as PropType<
+        (context: RenderBlockContext<any>) => AdapterReturn
+      >,
+    },
+    /** Fuction that converts an 'inlineBlock' node into a Vue component **/
+    renderInlineBlock: {
       type: Function as PropType<
         (context: RenderBlockContext<any>) => AdapterReturn
       >,
     },
     /** Function that converts 'link' and 'itemLink' `meta` into HTML props */
     metaTransformer: { type: Function as PropType<TransformMetaFn> },
-    /** Fuction that converts a simple string text into Vue **/
+    /** Fuction that converts a simple string text into a Vue component **/
     renderText: { type: Function as PropType<T> },
-    /** Vue.createElement-like function to use to convert a node into Vue **/
+    /** React.createElement-like function to use to convert a node into a Vue component **/
     renderNode: { type: Function as PropType<H> },
     /** Function to use to generate a Vue.Fragment **/
     renderFragment: { type: Function as PropType<F> },
@@ -246,6 +253,37 @@ export const StructuredText = defineComponent({
 
             return appendKeyToValidElement(
               props.renderBlock({ record: item }),
+              key,
+            );
+          }),
+          renderNodeRule(isInlineBlock, ({ node, key }) => {
+            if (!props.renderInlineBlock) {
+              throw new RenderError(
+                `The Structured Text document contains an 'inlineBlock' node, but no 'renderInlineBlock' prop is specified!`,
+                node,
+              );
+            }
+
+            if (!isStructuredText(props.data) || !props.data.blocks) {
+              throw new RenderError(
+                `The Structured Text document contains an 'inlineBlock' node, but .blocks is not present!`,
+                node,
+              );
+            }
+
+            const item = props.data.blocks.find(
+              (item) => item.id === node.item,
+            );
+
+            if (!item) {
+              throw new RenderError(
+                `The Structured Text document contains a 'block' node, but cannot find a record with ID ${node.item} inside .blocks!`,
+                node,
+              );
+            }
+
+            return appendKeyToValidElement(
+              props.renderInlineBlock({ record: item }),
               key,
             );
           }),

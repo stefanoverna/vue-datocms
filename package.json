@@ -42,9 +42,9 @@
   },
   "dependencies": {
     "datocms-listen": "^0.1.15",
-    "datocms-structured-text-generic-html-renderer": "^4.0.1",
-    "datocms-structured-text-utils": "^4.0.1",
     "hls.js": "^1.5.17",
+    "datocms-structured-text-generic-html-renderer": "next",
+    "datocms-structured-text-utils": "next",
     "hyphenate-style-name": "^1.0.4"
   },
   "peerDependencies": {
